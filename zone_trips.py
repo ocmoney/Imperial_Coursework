@@ -1,5 +1,17 @@
 """
-Zone Trip Generation Calculator - Simple version that just calculates total trips by zone.
+Zone Trip Generation Calculator for Planning Year Forecasting
+
+TECHNICAL METHODOLOGY:
+1. Apply estimated OLS regression model from base year to forecast planning year trips
+2. Use segment-specific behavioral parameters (not zone-specific) for spatial transferability  
+3. Linear aggregation: Zone_trips = Σ(N_households_seg × E[trips|segment_characteristics])
+
+MATHEMATICAL FORMULATION:
+T_zone = Σ(s=1 to 9) [H_s,zone × (α + Σβᵢδᵢ,s + β_size × HH_size_s)]
+
+Where: H_s,zone = households in segment s, zone
+       δᵢ,s = dummy variables for segment s characteristics  
+       HH_size_s = segment-specific average household size
 """
 
 import pandas as pd
@@ -10,8 +22,10 @@ data = load_data('Data_CW1.csv')
 data = create_dummy_variables(data)
 model, X, y = estimate_trip_generation_model(data)
 
-# Get segment-specific average household sizes
-#calculate average household sizes: use only segment specific average household sizes, and not zone specific average household sizes for each segment. 
+# Calculate segment-specific average household sizes from base year data
+# Technical note: Using .groupby('Segment').mean() aggregates across all zones
+# This ensures behavioral consistency - segment 1 households have same avg HH size 
+# whether in zone A or E, avoiding spatial bias in forecasting
 segment_hh_sizes = data.groupby('Segment')['HH Size'].mean().to_dict() 
 
 # Projected households by zone and segment (Table 2)
@@ -23,7 +37,12 @@ projected = {
 }
 projected_df = pd.DataFrame(projected)
 
-# Segment dummy variable mappings
+# Segment dummy variable mappings for regression model application
+# Each list represents: [MedInc, HigInc, 1CarLowInc, 1CarMedInc, 1CarHigInc, 2+Cars]
+# Technical implementation: Binary encoding of segment characteristics for linear model
+# Segments 1-3: Low income (no MedInc/HigInc), varying car ownership
+# Segments 4-6: Medium income (MedInc=1), varying car ownership  
+# Segments 7-9: High income (HigInc=1), varying car ownership
 segment_dummies = {
     1: [0, 0, 0, 0, 0, 0], 2: [0, 0, 1, 0, 0, 0], 3: [0, 0, 0, 0, 0, 1], 4: [1, 0, 0, 0, 0, 0],
     5: [1, 0, 0, 1, 0, 0], 6: [1, 0, 0, 0, 0, 1], 7: [0, 1, 0, 0, 0, 0], 8: [0, 1, 0, 0, 1, 0], 9: [0, 1, 0, 0, 0, 1]
@@ -41,18 +60,23 @@ for _, row in projected_df.iterrows():
     zone = row['Zone']
     zone_total = 0
     
-    for seg in range(1, 10):
-        households = row[f'Seg{seg}']
-        hh_size = segment_hh_sizes[seg] 
+    for seg in range(1, 10):  # Iterate through all 9 household segments
+        households = row[f'Seg{seg}']           # Number of households in this segment/zone
+        hh_size = segment_hh_sizes[seg]         # Segment-specific average household size
         
-        # Calculate trips per household using regression model
-        dummies = segment_dummies[seg]  # [MedInc, HigInc, 1CarLowInc, 1CarMedInc, 1CarHigInc, 2+Cars]
-        trips_per_hh = (model.params['const'] + 
-                       model.params['MedInc'] * dummies[0] + model.params['HigInc'] * dummies[1] +
-                       model.params['1CarLowInc'] * dummies[2] + model.params['1CarMedInc'] * dummies[3] +
-                       model.params['1CarHigInc'] * dummies[4] + model.params['2+Cars'] * dummies[5] +
-                       model.params['HH Size'] * hh_size)
+        # Apply linear regression model: T = β₀ + Σ(βᵢ × Xᵢ)
+        # Technical note: Matrix multiplication equivalent using explicit dummy coding
+        dummies = segment_dummies[seg]          # Binary indicators for segment characteristics
+        trips_per_hh = (model.params['const'] +                           # Intercept (α)
+                       model.params['MedInc'] * dummies[0] +              # β_MedInc × δ_MedInc
+                       model.params['HigInc'] * dummies[1] +              # β_HigInc × δ_HigInc  
+                       model.params['1CarLowInc'] * dummies[2] +          # β_1CarLowInc × δ_1CarLowInc
+                       model.params['1CarMedInc'] * dummies[3] +          # β_1CarMedInc × δ_1CarMedInc
+                       model.params['1CarHigInc'] * dummies[4] +          # β_1CarHigInc × δ_1CarHigInc
+                       model.params['2+Cars'] * dummies[5] +              # β_2+Cars × δ_2+Cars
+                       model.params['HH Size'] * hh_size)                 # β_HHSize × HHSize
         
+        # Aggregate to zone level: Zone trips = Σ(Households × Trips_per_HH) across segments
         zone_total += households * trips_per_hh
     
     total_all_zones += zone_total

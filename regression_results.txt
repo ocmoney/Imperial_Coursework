@@ -1,0 +1,71 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                NoTrips   R-squared:                       0.536
+Model:                            OLS   Adj. R-squared:                  0.534
+Method:                 Least Squares   F-statistic:                     397.8
+Date:                Mon, 27 Oct 2025   Prob (F-statistic):               0.00
+Time:                        16:19:31   Log-Likelihood:                -3337.9
+No. Observations:                2045   AIC:                             6692.
+Df Residuals:                    2037   BIC:                             6737.
+Df Model:                           7                                         
+Covariance Type:                  HC3                                         
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.8699      0.094      9.247      0.000       0.685       1.054
+MedInc         1.0919      0.086     12.626      0.000       0.922       1.261
+HigInc         2.1231      0.085     25.117      0.000       1.957       2.289
+1CarLowInc     0.7550      0.133      5.692      0.000       0.495       1.015
+1CarMedInc     1.4343      0.114     12.582      0.000       1.211       1.658
+1CarHigInc     1.5312      0.091     16.788      0.000       1.352       1.710
+2+Cars         2.2406      0.063     35.340      0.000       2.116       2.365
+HH Size        0.3215      0.028     11.668      0.000       0.267       0.375
+==============================================================================
+Omnibus:                       13.097   Durbin-Watson:                   2.021
+Prob(Omnibus):                  0.001   Jarque-Bera (JB):               13.145
+Skew:                          -0.190   Prob(JB):                      0.00140
+Kurtosis:                       3.102   Cond. No.                         21.4
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC3)
+
+DIAGNOSTIC TESTS
+============================================================
+
+1. HETEROSKEDASTICITY TESTS
+------------------------------
+Breusch-Pagan Test:
+  LM Statistic        : 127.835
+  LM-Test p-value     : 0.000
+  F-Statistic         : 19.404
+  F-Test p-value      : 0.000
+
+White Test:
+  LM Statistic        : 131.519
+  LM-Test p-value     : 0.000
+  F-Statistic         : 8.712
+  F-Test p-value      : 0.000
+
+2. AUTOCORRELATION TEST (Breusch-Godfrey)
+------------------------------
+  LM Statistic        : 0.239
+  p-value             : 0.625
+  F-statistic         : 0.238
+  F p-value           : 0.625
+
+3. MULTICOLLINEARITY (VIF)
+------------------------------
+  MedInc              : 2.947
+  HigInc              : 3.115
+  1CarLowInc          : 1.529
+  1CarMedInc          : 1.438
+  1CarHigInc          : 1.578
+  2+Cars              : 1.340
+  HH Size             : 1.132
+
+4. OUTLIER ANALYSIS
+------------------------------
+  Observations with |std_resid| > 2.5: 26
+  Observations with |std_resid| > 3.0: 7
+  Percentage outliers (>2.5): 1.27%

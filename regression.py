@@ -52,7 +52,8 @@ def create_dummy_variables(data):
     data.loc[(data['HigInc'] == 1) & (data['1Car'] == 1), 'Segment'] = 8
     data.loc[(data['HigInc'] == 1) & (data['2+Cars'] == 1), 'Segment'] = 9
 
-    print("data after segment creation:", data.head())
+    print("data after segment creation:")
+    print(data.head())
     
     return data
 
