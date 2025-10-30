@@ -106,13 +106,15 @@ print(f"F-statistic: {model.fvalue:.1f}")
 print(f"Prob (F-statistic): {model.f_pvalue:.2e}")
 print(f"No. Observations: {int(model.nobs)}")
 print("\nCoefficients:")
-print("-"*60)
+print("-"*70)
+print(f"{'Variable':<12} {'Coef':>10} {'Std Err':>10} {'t':>10} {'P>|t|':>10}")
+print("-"*70)
 for i, var in enumerate(model.params.index):
     coef = model.params[i]
     std_err = model.bse[i]
     t_stat = model.tvalues[i]
     p_val = model.pvalues[i]
-    print(f"{var:<12} {coef:>8.3f} {std_err:>8.3f} {t_stat:>8.3f} {p_val:>8.3f}")
+    print(f"{var:<12} {coef:>10.3f} {std_err:>10.3f} {t_stat:>10.3f} {p_val:>10.3f}")
 
 print("\nDIAGNOSTIC TESTS SUMMARY:")
 print("="*50)

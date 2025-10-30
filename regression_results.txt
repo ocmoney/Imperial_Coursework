@@ -3,8 +3,8 @@
 Dep. Variable:                NoTrips   R-squared:                       0.536
 Model:                            OLS   Adj. R-squared:                  0.534
 Method:                 Least Squares   F-statistic:                     397.8
-Date:                Mon, 27 Oct 2025   Prob (F-statistic):               0.00
-Time:                        16:19:31   Log-Likelihood:                -3337.9
+Date:                Thu, 30 Oct 2025   Prob (F-statistic):               0.00
+Time:                        14:54:14   Log-Likelihood:                -3337.9
 No. Observations:                2045   AIC:                             6692.
 Df Residuals:                    2037   BIC:                             6737.
 Df Model:                           7                                         

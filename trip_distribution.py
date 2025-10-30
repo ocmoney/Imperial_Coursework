@@ -106,7 +106,7 @@ def ipf_algorithm(P, A, f_matrix, max_iterations=100, tolerance=0.1):
         print(f"\nIteration {iteration + 1}:")
         print(f"Maximum change: {max_change:.4f}")
         
-        if iteration < 5 or max_change > tolerance:  # Show first few iterations and last
+        if max_change > tolerance:  # Show first few iterations and last
             print_matrix(T, f"T after iteration {iteration + 1}")
             print_balance_check(T, P, A)
         

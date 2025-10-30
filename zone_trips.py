@@ -27,6 +27,7 @@ model, X, y = estimate_trip_generation_model(data)
 # This ensures behavioral consistency - segment 1 households have same avg HH size 
 # whether in zone A or E, avoiding spatial bias in forecasting
 segment_hh_sizes = data.groupby('Segment')['HH Size'].mean().to_dict() 
+print("average household sizes:", segment_hh_sizes)
 
 # Projected households by zone and segment (Table 2)
 projected = {

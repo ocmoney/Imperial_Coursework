@@ -133,12 +133,12 @@ def calculate_mode_probabilities(V_walk, V_rail, V_car):
     
     for i in range(n_zones):
         for j in range(n_zones):
-            if i == j:  # Intrazonal trips
-                # For intrazonal trips, only walking is available
-                P_walk[i, j] = 1.0
-                P_rail[i, j] = 0.0
-                P_car[i, j] = 0.0
-            else:
+            # if i == j:  # Intrazonal trips
+            #     # For intrazonal trips, only walking is available
+            #     P_walk[i, j] = 1.0
+            #     P_rail[i, j] = 0.0
+            #     P_car[i, j] = 0.0
+            # else:
                 # Calculate exponentials
                 exp_walk = math.exp(V_walk[i, j])
                 exp_rail = math.exp(V_rail[i, j])
